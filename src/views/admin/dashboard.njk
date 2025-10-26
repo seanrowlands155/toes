@@ -1,0 +1,77 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<h1>Store management</h1>
+<nav class="admin-nav">
+  <a class="button" href="/admin/products/new">Add product</a>
+  <a class="button" href="/admin/categories/new">Add category</a>
+  <a class="button" href="/admin/pages/new">Create page</a>
+  <a class="button" href="/admin/settings">Site settings</a>
+</nav>
+
+<section>
+  <h2>Products</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Categories</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.price }} {{ product.currency }}</td>
+          <td>
+            {% for categoryId in product.categoryIds %}
+              {% set category = categories | selectattr('id', 'equalto', categoryId) | first %}
+              <span class="tag">{{ category.name if category else 'Uncategorised' }}</span>
+            {% endfor %}
+          </td>
+          <td>
+            <a href="/admin/products/{{ product.id }}/edit">Edit</a>
+            <form method="post" action="/admin/products/{{ product.id }}/delete" style="display:inline">
+              <button type="submit" class="button button-clear">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="4">No products yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Categories</h2>
+  <ul>
+    {% for category in categories %}
+      <li>
+        <strong>{{ category.name }}</strong> – {{ category.description or 'No description' }}
+        <a href="/admin/categories/{{ category.id }}/edit">Edit</a>
+      </li>
+    {% else %}
+      <li>No categories created yet.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section>
+  <h2>Custom pages</h2>
+  <ul>
+    {% for page in pages %}
+      <li>
+        <a href="/pages/{{ page.slug }}">{{ page.title }}</a> (template: {{ page.template }})
+        <a href="/admin/pages/{{ page.id }}/edit">Edit</a>
+      </li>
+    {% else %}
+      <li>No custom pages yet.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

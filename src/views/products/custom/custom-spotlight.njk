@@ -1,0 +1,36 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section class="spotlight">
+  <div class="row">
+    <div class="column column-40">
+      <h1>{{ product.name }}</h1>
+      <p class="lead">{{ product.description }}</p>
+      <p><strong>{{ product.price | round(2, 'floor') }} {{ product.currency }}</strong></p>
+      <a class="button button-outline" href="/">Back to catalog</a>
+    </div>
+    <div class="column column-60">
+      {% if product.media.length %}
+        <img src="{{ product.media[0].url }}" alt="{{ product.media[0].altText }}" />
+      {% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h3>Details</h3>
+      <div class="row">
+        {% for key, value in product.additionalInfo %}
+          <div class="column column-50">
+            <div class="product-card">
+              <h5>{{ key }}</h5>
+              <p>{{ value }}</p>
+            </div>
+          </div>
+        {% else %}
+          <p>No additional details provided.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
