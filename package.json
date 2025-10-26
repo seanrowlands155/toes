@@ -1,0 +1,30 @@
+{
+  "name": "nunjucks-ecommerce",
+  "version": "1.0.0",
+  "description": "Base ecommerce system built with Node.js, TypeScript, Express, and Nunjucks.",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [
+    "ecommerce",
+    "typescript",
+    "nunjucks",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "nunjucks": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.30",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.3"
+  }
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or 'Storefront' }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-oHDEc8Xedpzl9YxjaG1JrXPX3yv5R16vuMJiceqd7qV3CyMfCVxYv3BPjVAk0nnBYnCTTR+T0VYyXW+P3rYBOA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css" integrity="sha512-WSv0bkkCm1cW0XkyKADVY6jwxKF1u9IiMaivGi99ZTSdKCbFf8gDuwZQzQ0imeISFRCGDpa2BkLomPvKg3Y2+w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      body {
+        background-color: #f8f9fb;
+      }
+      header.site-header,
+      footer.site-footer {
+        background-color: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      footer.site-footer {
+        margin-top: 4rem;
+        border-top: 1px solid #e0e0e0;
+        border-bottom: none;
+      }
+      .product-card {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(59, 78, 121, 0.1);
+        height: 100%;
+      }
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+      }
+      .product-media img {
+        width: 100%;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+      .admin-nav {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      .wysiwyg {
+        min-height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">{{ settings.headerHtml | safe }}</header>
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">{{ settings.footerHtml | safe }}</footer>
+    <script src="/js/wysiwyg.js"></script>
+  </body>
+</html>

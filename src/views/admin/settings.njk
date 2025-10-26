@@ -1,0 +1,79 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<h1>Site settings</h1>
+<form method="post" action="/admin/settings">
+  <label for="headerHtml">Header HTML</label>
+  <textarea id="headerHtml" name="headerHtml" class="wysiwyg" data-wysiwyg="true">{{ settings.headerHtml }}</textarea>
+
+  <label for="footerHtml">Footer HTML</label>
+  <textarea id="footerHtml" name="footerHtml" class="wysiwyg" data-wysiwyg="true">{{ settings.footerHtml }}</textarea>
+
+  <fieldset>
+    <legend>Payment gateways</legend>
+    <div id="gateway-list">
+      {% for gateway in settings.paymentGateways %}
+        <div class="gateway-row">
+          <label>Provider</label>
+          <input type="text" name="gatewayProvider" value="{{ gateway.provider }}" required />
+          <label>
+            <input type="checkbox" name="gatewayEnabled_{{ loop.index0 }}" {% if gateway.enabled %}checked{% endif %} />
+            Enabled
+          </label>
+          <label>Public key</label>
+          <input type="text" name="gatewayPublicKey" value="{{ gateway.publicKey or '' }}" />
+          <label>Secret key</label>
+          <input type="text" name="gatewaySecretKey" value="{{ gateway.secretKey or '' }}" />
+          <label>Instructions</label>
+          <textarea name="gatewayInstructions">{{ gateway.metadata.instructions if gateway.metadata else '' }}</textarea>
+        </div>
+      {% else %}
+        <div class="gateway-row">
+          <label>Provider</label>
+          <input type="text" name="gatewayProvider" placeholder="stripe" />
+          <label>
+            <input type="checkbox" name="gatewayEnabled_0" />
+            Enabled
+          </label>
+          <label>Public key</label>
+          <input type="text" name="gatewayPublicKey" />
+          <label>Secret key</label>
+          <input type="text" name="gatewaySecretKey" />
+          <label>Instructions</label>
+          <textarea name="gatewayInstructions"></textarea>
+        </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="button button-outline" data-action="add-gateway">Add gateway</button>
+  </fieldset>
+
+  <button type="submit" class="button-primary">Save settings</button>
+</form>
+
+<script>
+  window.adminEnhancements = window.adminEnhancements || [];
+  window.adminEnhancements.push(function () {
+    document.querySelector('[data-action="add-gateway"]').addEventListener('click', function () {
+      const container = document.getElementById('gateway-list');
+      const index = container.children.length;
+      const row = document.createElement('div');
+      row.className = 'gateway-row';
+      row.innerHTML = `
+        <label>Provider</label>
+        <input type="text" name="gatewayProvider" placeholder="provider-name" required />
+        <label>
+          <input type="checkbox" name="gatewayEnabled_${index}" />
+          Enabled
+        </label>
+        <label>Public key</label>
+        <input type="text" name="gatewayPublicKey" />
+        <label>Secret key</label>
+        <input type="text" name="gatewaySecretKey" />
+        <label>Instructions</label>
+        <textarea name="gatewayInstructions"></textarea>
+      `;
+      container.appendChild(row);
+    });
+  });
+</script>
+{% endblock %}

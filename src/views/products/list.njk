@@ -1,0 +1,30 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<section>
+  <h1>Featured Products</h1>
+  <div class="product-grid">
+    {% for product in products %}
+      <article class="product-card">
+        <div class="product-media">
+          {% if product.media.length %}
+            <img src="{{ product.media[0].url }}" alt="{{ product.media[0].altText }}" />
+          {% endif %}
+        </div>
+        <h3><a href="/products/{{ product.slug }}">{{ product.name }}</a></h3>
+        <p>{{ product.description }}</p>
+        <p><strong>{{ product.price | round(2, 'floor') }} {{ product.currency }}</strong></p>
+        <p>
+          Categories:
+          {% for category in product.categoryIds %}
+            {% set categoryObj = categories | selectattr('id', 'equalto', category) | first %}
+            <span class="tag">{{ categoryObj.name if categoryObj else 'Uncategorised' }}</span>
+          {% endfor %}
+        </p>
+      </article>
+    {% else %}
+      <p>No products available yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

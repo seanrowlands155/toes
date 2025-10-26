@@ -1,0 +1,29 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<article>
+  <div class="row">
+    <div class="column">
+      {% if product.media.length %}
+        <img src="{{ product.media[0].url }}" alt="{{ product.media[0].altText }}" />
+      {% endif %}
+    </div>
+    <div class="column">
+      <h1>{{ product.name }}</h1>
+      <p>{{ product.description }}</p>
+      <p><strong>{{ product.price | round(2, 'floor') }} {{ product.currency }}</strong></p>
+      <h4>Product information</h4>
+      <ul>
+        {% for key, value in product.additionalInfo %}
+          <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% else %}
+          <li>No additional information provided.</li>
+        {% endfor %}
+      </ul>
+      <p>
+        <a class="button" href="/admin">Manage product</a>
+      </p>
+    </div>
+  </div>
+</article>
+{% endblock %}
