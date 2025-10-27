@@ -21,6 +21,11 @@
             <span class="tag">{{ categoryObj.name if categoryObj else 'Uncategorised' }}</span>
           {% endfor %}
         </p>
+        <form method="post" action="/cart/add" class="add-to-cart">
+          <input type="hidden" name="productId" value="{{ product.id }}" />
+          <input type="hidden" name="redirect" value="/" />
+          <button type="submit" class="button">Add to cart</button>
+        </form>
       </article>
     {% else %}
       <p>No products available yet.</p>

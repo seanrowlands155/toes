@@ -51,6 +51,12 @@
         margin-bottom: 2rem;
         flex-wrap: wrap;
       }
+      .add-to-cart {
+        margin-top: 1rem;
+      }
+      .add-to-cart input[type='number'] {
+        max-width: 120px;
+      }
       .wysiwyg {
         min-height: 200px;
       }
@@ -67,6 +73,26 @@
         align-items: center;
         margin-block-start: 0px;
       }
+      .text-right {
+        text-align: right;
+      }
+      .message {
+        background-color: #e9fbe5;
+        border: 1px solid #b7e1b0;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table th,
+      table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #e0e0e0;
+        vertical-align: top;
+      }
     </style>
   </head>
   <body>
@@ -80,6 +106,7 @@
       <li><a href="/admin/orders">Orders</a></li>
       <li><a href="/admin/customers">Customers</a></li>
       <li><a href="/admin/settings">Settings</a></li>
+      <li><a href="/cart">Cart{% if cartItemCount %} ({{ cartItemCount }}){% endif %}</a></li>
     </menu>
     <main class="container">
       {% block content %}{% endblock %}
