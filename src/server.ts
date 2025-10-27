@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import nunjucks from 'nunjucks';
@@ -7,6 +7,65 @@ import { store } from './data/store';
 import { Product } from './data/models';
 
 const app = express();
+
+type CartItem = {
+  productId: string;
+  quantity: number;
+};
+
+type RequestWithCart = Request & { __cartItems?: CartItem[] };
+
+const CART_COOKIE_NAME = 'cart';
+
+const getCookieValue = (req: Request, name: string): string | undefined => {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return undefined;
+  const cookies = cookieHeader.split(';').map((cookie) => cookie.trim());
+  const match = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  if (!match) return undefined;
+  try {
+    return decodeURIComponent(match.slice(name.length + 1));
+  } catch {
+    return undefined;
+  }
+};
+
+const parseCartItems = (req: RequestWithCart): CartItem[] => {
+  if (req.__cartItems) return req.__cartItems;
+  const raw = getCookieValue(req, CART_COOKIE_NAME);
+  if (!raw) {
+    req.__cartItems = [];
+    return req.__cartItems;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      req.__cartItems = [];
+      return req.__cartItems;
+    }
+
+    req.__cartItems = parsed
+      .map((item) => ({
+        productId: typeof item.productId === 'string' ? item.productId : '',
+        quantity: Number.isFinite(Number(item.quantity)) ? Number(item.quantity) : 0
+      }))
+      .filter((item) => item.productId && item.quantity > 0);
+    return req.__cartItems;
+  } catch {
+    req.__cartItems = [];
+    return req.__cartItems;
+  }
+};
+
+const writeCartItems = (res: Response, items: CartItem[]) => {
+  const sanitized = items.filter((item) => item.quantity > 0);
+  res.cookie(CART_COOKIE_NAME, JSON.stringify(sanitized), {
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30
+  });
+};
 
 // after creating `app`
 const isDev = process.env.NODE_ENV !== 'production';
@@ -35,6 +94,13 @@ const publicDir = (() => {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(publicDir));
+
+app.use((req, res, next) => {
+  const cartItems = parseCartItems(req as RequestWithCart);
+  res.locals.cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  res.locals.query = req.query;
+  next();
+});
 
 nunjucks.configure(viewsDir, {
   autoescape: true,
@@ -126,7 +192,12 @@ app.get('/products/:slug', (req, res) => {
     return res.status(404).render('errors/404.njk');
   }
   const template = product.customTemplate ? `products/custom/${product.customTemplate}` : 'products/detail.njk';
-  res.render(template, { product, settings: store.getSettings(), categories: store.listCategories() });
+  res.render(template, {
+    product,
+    settings: store.getSettings(),
+    categories: store.listCategories(),
+    returnUrl: req.originalUrl
+  });
 });
 
 app.get('/pages/:slug', (req, res) => {
@@ -144,6 +215,65 @@ app.get('/admin', (_req, res) => {
     pages: store.listPages(),
     settings: store.getSettings()
   });
+});
+
+app.get('/cart', (req, res) => {
+  const cartItems = parseCartItems(req as RequestWithCart);
+  const items = cartItems
+    .map((item) => {
+      const product = store.getProduct(item.productId);
+      if (!product) return undefined;
+      const lineTotal = product.price * item.quantity;
+      return {
+        product,
+        quantity: item.quantity,
+        lineTotal
+      };
+    })
+    .filter((entry): entry is { product: Product; quantity: number; lineTotal: number } => Boolean(entry));
+
+  const total = items.reduce((sum, item) => sum + item.lineTotal, 0);
+
+  res.render('cart/detail.njk', {
+    items,
+    total,
+    settings: store.getSettings()
+  });
+});
+
+app.post('/cart/add', (req, res) => {
+  const request = req as RequestWithCart;
+  const items = [...parseCartItems(request)];
+  const productIdRaw = Array.isArray(req.body.productId) ? req.body.productId[0] : req.body.productId;
+  const quantityRaw = Array.isArray(req.body.quantity) ? req.body.quantity[0] : req.body.quantity;
+  const redirectRaw = Array.isArray(req.body.redirect) ? req.body.redirect[0] : req.body.redirect;
+
+  if (typeof productIdRaw !== 'string') {
+    return res.redirect(redirectRaw || '/');
+  }
+
+  const product = store.getProduct(productIdRaw);
+  if (!product) {
+    return res.redirect(redirectRaw || '/');
+  }
+
+  const quantity = Math.max(1, Number.parseInt(quantityRaw ?? '1', 10) || 1);
+
+  const existingItem = items.find((item) => item.productId === product.id);
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    items.push({ productId: product.id, quantity });
+  }
+
+  request.__cartItems = items;
+  writeCartItems(res, items);
+
+  const redirectUrl = redirectRaw && typeof redirectRaw === 'string' ? redirectRaw : `/products/${product.slug}`;
+  const url = new URL(redirectUrl, `${req.protocol}://${req.get('host')}`);
+  url.searchParams.set('added', '1');
+
+  res.redirect(url.pathname + url.search);
 });
 
 app.get('/admin/products/new', (_req, res) => {
