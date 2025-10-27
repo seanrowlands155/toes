@@ -12,10 +12,16 @@
       }
       header.site-header,
       footer.site-footer {
-        background-color: #ffffff;
+        background-color: hotpink;
         border-bottom: 1px solid #e0e0e0;
         padding: 1.5rem;
-        margin-bottom: 2rem;
+        !important;display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        flex-direction: column;
+        align-content: center;
+        justify-content: center;
       }
       footer.site-footer {
         margin-top: 4rem;
@@ -48,10 +54,33 @@
       .wysiwyg {
         min-height: 200px;
       }
+      .nav-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        background-color: lime;
+        list-style: none;
+        padding: 30px;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+        margin-block-start: 0px;
+      }
     </style>
   </head>
   <body>
-    <header class="site-header">{{ settings.headerHtml | safe }}</header>
+    <header class="site-header">
+      <img class="central-header" src="https://images.squarespace-cdn.com/content/v1/68baff5b86acc83bdb41d2c6/0770a1e2-fd18-4c41-8ed9-5541caa55e54/logo.png?format=1500w" alt=""/>
+    </header>
+    <menu class="nav-bar">
+      <li><a href="/">Home</a></li>
+      <li><a href="/admin">Admin</a></li>
+      <li><a href="/admin/products">Products</a></li>
+      <li><a href="/admin/orders">Orders</a></li>
+      <li><a href="/admin/customers">Customers</a></li>
+      <li><a href="/admin/settings">Settings</a></li>
+    </menu>
     <main class="container">
       {% block content %}{% endblock %}
     </main>

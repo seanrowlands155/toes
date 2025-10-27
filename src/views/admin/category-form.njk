@@ -1,7 +1,7 @@
 {% extends "layouts/base.njk" %}
 
 {% block content %}
-<h1>{{ category ? 'Edit category' : 'Create category' }}</h1>
+<h1>{{ 'Edit category' if category is defined and category else  'Create category' }}</h1>
 <form method="post" action="{{ action }}">
   <label for="name">Name</label>
   <input type="text" id="name" name="name" value="{{ category.name if category else '' }}" required />
@@ -18,7 +18,8 @@
       {% endif %}
     {% endfor %}
   </select>
-
-  <button type="submit" class="button-primary">{{ category ? 'Save changes' : 'Create category' }}</button>
+  <button type="submit" class="button-primary">
+    {{ 'Save changes' if category is defined and category else  'Create category' }}
+  </button>
 </form>
 {% endblock %}

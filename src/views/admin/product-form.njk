@@ -1,7 +1,7 @@
 {% extends "layouts/base.njk" %}
 
 {% block content %}
-<h1>{{ product ? 'Edit product' : 'Create product' }}</h1>
+    {{ 'Edit product' if product is defined and product else 'Create product' }}
 <form method="post" action="{{ action }}">
   <label for="name">Name</label>
   <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required />
@@ -70,7 +70,7 @@
   <label for="customTemplate">Custom template (optional)</label>
   <input type="text" id="customTemplate" name="customTemplate" value="{{ product.customTemplate if product else '' }}" placeholder="custom-spotlight.njk" />
 
-  <button type="submit" class="button-primary">{{ product ? 'Save changes' : 'Create product' }}</button>
+  <button type="submit" class="button-primary">{{ 'Save changes' if product is defined and product else 'Create product' }}</button>
 </form>
 
 <script>

@@ -7,6 +7,13 @@ import { store } from './data/store';
 import { Product } from './data/models';
 
 const app = express();
+
+// after creating `app`
+const isDev = process.env.NODE_ENV !== 'production';
+if (isDev) {
+  app.set('view cache', false);
+}
+
 const port = process.env.PORT || 3000;
 
 const viewsDir = (() => {
@@ -31,7 +38,9 @@ app.use(express.static(publicDir));
 
 nunjucks.configure(viewsDir, {
   autoescape: true,
-  express: app
+  express: app,
+  noCache: isDev, // re-read templates on each render in dev
+  watch: isDev    // watch template files for changes in dev
 });
 
 app.locals.store = store;
