@@ -6,9 +6,34 @@
     <title>{{ title or 'Storefront' }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-oHDEc8Xedpzl9YxjaG1JrXPX3yv5R16vuMJiceqd7qV3CyMfCVxYv3BPjVAk0nnBYnCTTR+T0VYyXW+P3rYBOA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css" integrity="sha512-WSv0bkkCm1cW0XkyKADVY6jwxKF1u9IiMaivGi99ZTSdKCbFf8gDuwZQzQ0imeISFRCGDpa2BkLomPvKg3Y2+w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="../../public/fonts/GlacialIndifference-Regular.otf" as="font" type="font/otf" crossorigin>
     <style>
+      /* Glacial Indifference (self-hosted) */
+      @font-face {
+        font-family: 'Glacial Indifference';
+        src: url('../../public/fonts/GlacialIndifference-Regular.otf') format('otf');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Glacial Indifference';
+        src: url('../../public/fonts/GlacialIndifference-Bold.otf') format('otf');
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Glacial Indifference';
+        src: url('../../public/fonts/GlacialIndifference-Italic.otf') format('otf');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+
       body {
         background-color: #f8f9fb;
+        font-family: 'Glacial Indifference', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
       }
       header.site-header,
       footer.site-footer {
@@ -50,12 +75,6 @@
         gap: 1rem;
         margin-bottom: 2rem;
         flex-wrap: wrap;
-      }
-      .add-to-cart {
-        margin-top: 1rem;
-      }
-      .add-to-cart input[type='number'] {
-        max-width: 120px;
       }
       .wysiwyg {
         min-height: 200px;
